@@ -11,6 +11,9 @@ chrome.browserAction.onClicked.addListener(function(tab) {
             console.log("Running");
             var video_link = false;
             // PH
+            if (document.querySelector('video')) {
+                video_link = document.querySelector('video').getAttribute('src');
+            }
             if (document.querySelector('video source')) {
                 video_link = document.querySelector('video source').getAttribute('src');
             }
@@ -43,6 +46,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
                 pages[i].setAttribute('data-loaded', 'yes');
                 window.open(pages[i].getAttribute('href'), '_blank');
             }
-        `
+        `,
+        allFrames: true
     });
 });
