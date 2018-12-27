@@ -200,6 +200,19 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
             }
             return string;
         }
+        function exchange_list_get() {
+            var t = Array.prototype.slice.call(dom_nth_child(dom_nth_sibling(dom_search_by_text('Links', 'h2'), 0), 1).childNodes, 0).reverse();
+            var list = [];
+            for (var i in t) {
+                if (t[i].nodeType == 3 && t[i].textContent.indexOf('Buy:') > -1) {
+                    break
+                }
+                if (t[i].nodeType == 1 && t[i].textContent.length > 1) {
+                    list.push(t[i].textContent);
+                };
+            }
+            return list.join(',');
+        }
 
         var coin_name = coin_name_get(select_selected_value_get(document.querySelector('#change-coin')));
         var coin_price = coin_price_get(dom_textContent_get(dom_nth_child(dom_nth_child(dom_nth_child(dom_nth_child(document.querySelector('#masternode-stats'), 6), 0), 2), 0)));
@@ -209,9 +222,11 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
         var mn_reward_total = mn_reward_total_get(dom_textContent_get(dom_nth_child(dom_nth_child(dom_nth_child(dom_nth_child(document.querySelector('#masternode-stats'), 10), 0), 1), 1)));
         var mn_collateral = mn_collateral_get(dom_textContent_get(dom_nth_child(dom_nth_child(dom_nth_child(dom_nth_child(document.querySelector('#masternode-stats'), 10), 0), 6), 1)));
 
-        console.log(coin_name, coin_price, mn_count, mn_reward_freq, mn_reward_total, mn_collateral);
+        var exchange_list = exchange_list_get();
 
-        ajax_post('http://localhost:2000/api/v1/coins/' + coin_name, 'price=' + encodeURIComponent(coin_price) + '&mn_count=' + encodeURIComponent(mn_count) + '&mn_reward_total=' + encodeURIComponent(mn_reward_total) + '&mn_reward_freq=' + encodeURIComponent(mn_reward_freq) + '&mn_collateral=' + encodeURIComponent(mn_collateral), function() {
+        console.log(coin_name, coin_price, mn_count, mn_reward_freq, mn_reward_total, mn_collateral, exchange_list);
+
+        ajax_post('http://localhost:2000/api/v1/coins/' + coin_name, 'price=' + encodeURIComponent(coin_price) + '&mn_count=' + encodeURIComponent(mn_count) + '&mn_reward_total=' + encodeURIComponent(mn_reward_total) + '&mn_reward_freq=' + encodeURIComponent(mn_reward_freq) + '&mn_collateral=' + encodeURIComponent(mn_collateral) + '&exchanges=' + encodeURIComponent(exchange_list), function() {
             console.log('closing window');
             if (url_param_get_by_name('tab_generated') == 'yes') {
                 window_close();
