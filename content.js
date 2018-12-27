@@ -42,6 +42,19 @@ function dom_search_by_text(searchText, tag_name) {
     }
     return found;
 }
+function dom_search_by_text_all(searchText, tag_name) {
+    tag_name = tag_name || 'div';
+
+    var tags = document.getElementsByTagName(tag_name);
+    var found = [];
+
+    for (var i = 0; i < tags.length; i++) {
+        if (tags[i].textContent == searchText) {
+            found.push(tags[i]);
+        }
+    }
+    return found;
+}
 function dom_nth_sibling(node, n) {
     n = n || 0;
     if (node) {
@@ -201,17 +214,30 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
             return string;
         }
         function exchange_list_get() {
-            var t = Array.prototype.slice.call(dom_nth_child(dom_nth_sibling(dom_search_by_text('Links', 'h2'), 0), 1).childNodes, 0).reverse();
             var list = [];
-            for (var i in t) {
-                if (t[i].nodeType == 3 && t[i].textContent.indexOf('Buy:') > -1) {
-                    break
-                }
-                if (t[i].nodeType == 1 && t[i].textContent.length > 1) {
-                    list.push(t[i].textContent);
-                };
+            var node = dom_search_by_text('Announcement', 'a');
+            if (!node) {
+                node = dom_search_by_text('BB Announcement', 'a');
             }
-            return list.join(',');
+            if (node) {
+                var nodeList = [];
+                if (!node.nextSibling) {
+                    node = node.parentNode;
+                }
+                while(node = node.nextSibling) {
+                    nodeList.push(node);
+                }
+                var t = Array.prototype.slice.call(nodeList, 0).reverse();
+                for (var i in t) {
+                    if (t[i].nodeType == 3 && t[i].textContent.indexOf('Buy:') > -1) {
+                        break
+                    }
+                    if (t[i].nodeType == 1 && t[i].textContent.length > 1) {
+                        list.push(t[i].textContent);
+                    };
+                }
+            }
+            return list.reverse().join(',');
         }
 
         var coin_name = coin_name_get(select_selected_value_get(document.querySelector('#change-coin')));
