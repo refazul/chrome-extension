@@ -160,24 +160,24 @@ function send_message_to_background(message, callback) {
         }
     });
 }
+function open_links(anchor_tags_selector) {
+    var links = document.querySelectorAll(anchor_tags_selector + ':not([data-processed="yes"]');
+    for (var i = 0; i < 10; i++) {
+        var url = links[i].getAttribute('href');
+        send_message_to_background({greeting: 'create_new_tab', url: location.origin + url});
+        links[i].setAttribute('data-processed', 'yes');
+    }
+}
 
 //
 if (string_contains(window.location.href, 'https://masternodes.online')) {
     console.log("Running on masternodes.online");
-    function open_links() {
-        var links = document.querySelectorAll('#masternodes_table a:not([data-processed="yes"]');
-        for (var i = 0; i < 10; i++) {
-            var url = links[i].getAttribute('href');
-            send_message_to_background({greeting: 'create_new_tab', url: location.origin + url});
-            links[i].setAttribute('data-processed', 'yes');
-        }
-    }
     if (window.location.href == 'https://masternodes.online/') {
         console.log("Running on masternodes.online /");
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             console.log(request);
-            if (request.greeting == "open_links") {
-                open_links();
+            if (request.greeting == "browser_action_clicked") {
+                open_links('#masternodes_table a');
                 sendResponse({status: "Opening Links"});
             }
         });
@@ -321,9 +321,48 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         console.log(request);
 
-        if (request.greeting == "open_links") {
+        if (request.greeting == "browser_action_clicked") {
             scan_page();
             click_next();
+            sendResponse({status: "Opening Links"});
+        }
+    });
+} else if (string_contains(window.location.href, 'https://www.linkedin.com/learning/')) {
+    function scan_page() {
+        console.log('Running on Lynda');
+        var video_dom = document.querySelector('video');
+        console.log('video_dom', video_dom);
+        if (video_dom) {
+            var url = video_dom.getAttribute('src');
+            if (url) {
+                var data = {url: url}
+                console.log(data);
+
+                ajax_post('http://localhost:2000/api/v1/grabber/lynda', data, function() {
+                    console.log('closing window');
+                    if (url_param_get_by_name('tab_generated') == 'yes') {
+                        window_close();
+                    }
+                }, function() {
+                    console.log('closing window f');
+                    if (url_param_get_by_name('tab_generated') == 'yes') {
+                        window_close();
+                    }
+                });
+            }
+        } else {
+            setTimeout(function() {
+                scan_page();
+            }, 1000);
+        }
+    }
+    if (url_param_get_by_name('tab_generated') == 'yes') {
+        scan_page();
+    }
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        console.log(request);
+        if (request.greeting == "browser_action_clicked") {
+            open_links('.course-toc__list a');
             sendResponse({status: "Opening Links"});
         }
     });

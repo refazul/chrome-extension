@@ -34,7 +34,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 chrome.browserAction.onClicked.addListener(function(tab) {
     //if (tab.url.indexOf('https://masternodes.online') > -1) {
         chrome.tabs.sendMessage(tab.id, {
-            greeting: "open_links"
+            greeting: "browser_action_clicked"
         }, function(response) {
             console.log(response);
         });
