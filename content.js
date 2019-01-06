@@ -1,5 +1,13 @@
 console.log('Starting content.js');
 
+function ajax_post_data_process(post_data) {
+    var post_data_array = [];
+    for (var i in post_data) {
+        post_data_array.push(i + '=' + encodeURIComponent(post_data[i]))
+    }
+    return post_data_array.join('&');
+}
+
 function ajax_post(url, post_data, callback_s, callback_f) {
     var httpRequest = new XMLHttpRequest();
 
@@ -10,7 +18,7 @@ function ajax_post(url, post_data, callback_s, callback_f) {
     httpRequest.onreadystatechange = alertContents;
     httpRequest.open('POST', url);
     httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    httpRequest.send(post_data);
+    httpRequest.send(ajax_post_data_process(post_data));
 
     function alertContents() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -264,4 +272,59 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
             }
         });
     }
+} else if (string_contains(window.location.href, 'https://store.steampowered.com/search')) {
+    function scan_page() {
+        var steam_search_result = document.querySelectorAll('.search_result_row');
+        if (steam_search_result.length > 0) {
+            steam_search_result.forEach(function(value, key, array) {
+                var link = (value.protocol && value.host && value.pathname) ? (value.protocol + '//' + value.host + value.pathname) : false;
+                var title_dom = value.querySelector('.search_name .title');
+
+                if (link && title_dom) {
+                    var title = title_dom.textContent;
+                    var appid = value.getAttribute('data-ds-appid');
+                    var id = value.pathname.replace(/^\/|\/$/g, '').split('/').splice(0,2).join('-');
+
+                    var release_dom = value.querySelector('.search_released');
+                    var review_dom = value.querySelector('.search_review_summary')
+                    var release = release_dom.textContent;
+                    var review = review_dom.getAttribute('data-tooltip-html');
+
+                    var discount_dom = value.querySelector('.search_discount span');
+                    var prev_price_dom = value.querySelector('.search_price span strike');
+                    var discount = discount_dom ? discount_dom.textContent : '';
+                    var prev_price = prev_price_dom ? prev_price_dom.textContent : '';
+
+                    var current_price_dom = value.querySelector('.search_price');
+                    var current_price = Array.prototype.slice.call(current_price_dom.childNodes);
+                    current_price.reverse();
+                    current_price = current_price[0] ? current_price[0].textContent.trim() : '';
+
+                    var data = {link: link, id: id, appid: appid, title: title, release: release, review: review, discount: discount, prev_price: prev_price, current_price: current_price};
+                    //console.log(data);
+
+                    ajax_post('http://localhost:2000/api/v1/games/steam/' + id, data, function() {}, function() {});
+                }
+                else {
+                    console.log('something happened', value, key)
+                }
+            });
+        }
+    }
+    function click_next() {
+        var t = document.querySelectorAll('.pagebtn');
+        t = t[t.length - 1];
+        if (t.offsetWidth > 0) {
+            t.click();
+        }
+    }
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        console.log(request);
+
+        if (request.greeting == "open_links") {
+            scan_page();
+            click_next();
+            sendResponse({status: "Opening Links"});
+        }
+    });
 }

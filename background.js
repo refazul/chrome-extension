@@ -32,14 +32,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-    if (tab.url.indexOf('https://masternodes.online') > -1) {
+    //if (tab.url.indexOf('https://masternodes.online') > -1) {
         chrome.tabs.sendMessage(tab.id, {
             greeting: "open_links"
         }, function(response) {
             console.log(response);
         });
-        return;
-    }
+        //return;
+    //}
     // No tabs or host permissions needed!
     chrome.tabs.executeScript({
         code: `
