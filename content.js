@@ -160,9 +160,10 @@ function send_message_to_background(message, callback) {
         }
     });
 }
-function open_links(anchor_tags_selector) {
+function open_links(anchor_tags_selector, n) {
+    n = n || 10;
     var links = document.querySelectorAll(anchor_tags_selector + ':not([data-processed="yes"]');
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < n; i++) {
         var url = links[i].getAttribute('href');
         send_message_to_background({greeting: 'create_new_tab', url: location.origin + url});
         links[i].setAttribute('data-processed', 'yes');
@@ -338,7 +339,7 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
                 var data = {url: url}
                 console.log(data);
 
-                ajax_post('http://localhost:2000/api/v1/grabber/lynda', data, function() {
+                ajax_post('https://ultralifehack.com/api/v1/grabber/lynda', data, function() {
                     console.log('closing window');
                     if (url_param_get_by_name('tab_generated') == 'yes') {
                         window_close();
@@ -362,7 +363,7 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         console.log(request);
         if (request.greeting == "browser_action_clicked") {
-            open_links('.course-toc__list a');
+            open_links('.course-toc__list a', document.querySelectorAll('.course-toc__list a').length);
             sendResponse({status: "Opening Links"});
         }
     });
