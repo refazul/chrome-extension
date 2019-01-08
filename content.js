@@ -332,11 +332,13 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
     function scan_page() {
         console.log('Running on Lynda');
         var video_dom = document.querySelector('video');
+        var course_title_dom = document.querySelector('.course-banner__meta-title a');
         console.log('video_dom', video_dom);
-        if (video_dom) {
+        if (video_dom && course_title_dom) {
             var url = video_dom.getAttribute('src');
+            var course_title = course_title_dom.textContent;
             if (url) {
-                var data = {url: url}
+                var data = {url: url, course_title: course_title}
                 console.log(data);
 
                 ajax_post('https://ultralifehack.com/api/v1/grabber/lynda', data, function() {
