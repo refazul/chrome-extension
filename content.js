@@ -366,7 +366,7 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
         console.log(request);
         if (request.greeting == "browser_action_clicked") {
             open_links('.course-toc__list a', document.querySelectorAll('.course-toc__list a').length);
-            sendResponse({status: "Opening Links"});
+            sendResponse({status: "Opening Links", text: document.querySelectorAll('.course-toc__list a').length});
         }
     });
 }

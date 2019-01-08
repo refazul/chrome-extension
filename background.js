@@ -35,8 +35,11 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     //if (tab.url.indexOf('https://masternodes.online') > -1) {
         chrome.tabs.sendMessage(tab.id, {
             greeting: "browser_action_clicked"
-        }, function(response) {
+        }, null, function(response) {
             console.log(response);
+            if (response.text) {
+                chrome.browserAction.setBadgeText({text: response.text + ''});
+            }
         });
         //return;
     //}
