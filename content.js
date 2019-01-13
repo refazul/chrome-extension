@@ -136,6 +136,11 @@ function window_open(url) {
 function window_close() {
     window.close();
 }
+function window_close_delayed() {
+    setTimeout(function() {
+        window_close();
+    }, Math.floor(Math.random() * 1 * 1000) + 1);
+}
 
 function url_param_get_by_name(name, url) {
     if (!url) {
@@ -160,13 +165,18 @@ function send_message_to_background(message, callback) {
         }
     });
 }
+function open_link_delayed(url, delay) {
+    setTimeout(function() {
+        send_message_to_background({greeting: 'create_new_tab', url: url});
+    }, delay);
+}
 function open_links(anchor_tags_selector, n) {
     n = n || 10;
     var links = document.querySelectorAll(anchor_tags_selector + ':not([data-processed="yes"]');
     for (var i = 0; i < n; i++) {
         var url = links[i].getAttribute('href');
-        send_message_to_background({greeting: 'create_new_tab', url: location.origin + url});
         links[i].setAttribute('data-processed', 'yes');
+        open_link_delayed(location.origin + url, i*5000);
     }
 }
 
@@ -344,12 +354,12 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
                 ajax_post('https://ultralifehack.com/api/v1/grabber/lynda', data, function() {
                     console.log('closing window');
                     if (url_param_get_by_name('tab_generated') == 'yes') {
-                        window_close();
+                        window_close_delayed();
                     }
                 }, function() {
                     console.log('closing window f');
                     if (url_param_get_by_name('tab_generated') == 'yes') {
-                        window_close();
+                        window_close_delayed();
                     }
                 });
             }
