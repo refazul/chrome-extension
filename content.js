@@ -351,7 +351,7 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
                 var data = {url: url, course_title: course_title}
                 console.log(data);
 
-                ajax_post('https://ultralifehack.com/api/v1/grabber/lynda', data, function() {
+                ajax_post('https://crescentcoder.com/api/v1/grabber/lynda', data, function() {
                     console.log('closing window');
                     if (url_param_get_by_name('tab_generated') == 'yes') {
                         window_close_delayed();
