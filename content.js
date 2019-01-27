@@ -375,7 +375,7 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         console.log(request);
         if (request.greeting == "browser_action_clicked") {
-            open_links('.course-toc__list a', document.querySelectorAll('.course-toc__list a').length);
+            open_links('.course-toc__list a', Math.min(document.querySelectorAll('.course-toc__list a').length, 25));
             sendResponse({status: "Opening Links", text: document.querySelectorAll('.course-toc__list a').length});
         }
     });
