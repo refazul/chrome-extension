@@ -54,33 +54,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     // No tabs or host permissions needed!
     chrome.tabs.executeScript({
         code: `
-            console.log("Running");
-            var video_link = false;
-            if (document.querySelector('video')) {
-                video_link = document.querySelector('video').getAttribute('src');
-            }
-            if (!video_link) {
-                // PH
-                if (document.querySelector('video source')) {
-                    video_link = document.querySelector('video source').getAttribute('src');
-                }
-            }
-            if (!video_link) {
-                // URPRN.SY
-                if (document.querySelector('video#player_el')) {
-                    video_link = document.querySelector('video#player_el').getAttribute('src');
-                }
-            }
-            if (!video_link) {
-                // https://kompoz2.com/
-                if (document.querySelector('video source')) {
-                    video_link = document.querySelector('video source').getAttribute('src');
-                }
-            }
-            console.log('video_link', video_link);
-            if (video_link) {
-                //window.open(video_link, '_blank');
-            }
+            
         `,
         allFrames: true
     });
