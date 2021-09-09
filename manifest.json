@@ -3,7 +3,8 @@
     "description": "Make it Rain",
     "version": "2.0",
     "permissions": [
-        "activeTab"
+        "activeTab",
+        "downloads"
     ],
     "background": {
         "scripts": ["background.js"],

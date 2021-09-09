@@ -40,6 +40,14 @@ chrome.browserAction.onClicked.addListener(function(tab) {
             if (response.text) {
                 chrome.browserAction.setBadgeText({text: response.text + ''});
             }
+            if (response.video_link) {
+                var video_link = response.video_link;
+                var video_filename = response.video_filename || video_link.split('/').pop()
+                chrome.downloads.download({
+                    url: video_link,
+                    filename: video_filename // Optional
+                });                  
+            }
         });
         //return;
     //}
@@ -63,9 +71,15 @@ chrome.browserAction.onClicked.addListener(function(tab) {
                     video_link = document.querySelector('video#player_el').getAttribute('src');
                 }
             }
+            if (!video_link) {
+                // https://kompoz2.com/
+                if (document.querySelector('video source')) {
+                    video_link = document.querySelector('video source').getAttribute('src');
+                }
+            }
             console.log('video_link', video_link);
             if (video_link) {
-                window.open(video_link, '_blank');
+                //window.open(video_link, '_blank');
             }
         `,
         allFrames: true

@@ -379,4 +379,17 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
             sendResponse({status: "Opening Links", text: document.querySelectorAll('.course-toc__list a').length});
         }
     });
+} else if (string_contains(window.location.href, 'https://kompoz2.com/')) {
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        console.log(request);
+        if (request.greeting == "browser_action_clicked") {
+            var video_link = false;
+            var video_filename = false;
+            if (document.querySelector('video source')) {
+                video_link = document.querySelector('video source').getAttribute('src');
+                video_filename = video_link.split('https://kompoz2.com/video/')[1].split('/')[0] + '_' + video_link.split('/').pop();
+            }
+            sendResponse({video_link: video_link, video_filename: video_filename});
+        }
+    });
 }
