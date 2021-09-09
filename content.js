@@ -392,4 +392,15 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
             sendResponse({video_link: video_link, video_filename: video_filename});
         }
     });
+} else if (string_contains(window.location.href, 'http://nagordola.com.bd/')) {
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        console.log(request);
+        if (request.greeting == "browser_action_clicked") {
+            var video_link = false;
+            if (document.querySelector('a.btn-element.btn.btn-fullcolor.btn-block.btn-fullwidth')) {
+                video_link = document.querySelector('a.btn-element.btn.btn-fullcolor.btn-block.btn-fullwidth').getAttribute('href');
+            }
+            sendResponse({video_link: video_link});
+        }
+    });
 }
