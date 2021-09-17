@@ -36,13 +36,14 @@ chrome.browserAction.onClicked.addListener(function(tab) {
         chrome.tabs.sendMessage(tab.id, {
             greeting: "browser_action_clicked"
         }, null, function(response) {
-            console.log(response);
+            console.log('Background', response);
             if (response.text) {
                 chrome.browserAction.setBadgeText({text: response.text + ''});
             }
             if (response.video_link) {
                 var video_link = response.video_link;
-                var video_filename = response.video_filename || video_link.split('/').pop()
+                var video_filename = response.video_filename || video_link.split('/').pop().split('?')[0];
+                console.log('Background', { video_filename });
                 chrome.downloads.download({
                     url: video_link,
                     filename: video_filename // Optional

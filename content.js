@@ -403,4 +403,17 @@ if (string_contains(window.location.href, 'https://masternodes.online')) {
             sendResponse({video_link: video_link});
         }
     });
+} else if (string_contains(window.location.href, 'https://www.youporn.com/')) {
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        console.log('Content', request);
+        if (request.greeting == "browser_action_clicked") {
+            var video_link = false;
+            var video_filename = false;
+            if (document.querySelector('#videoContainer')) {
+                video_link = document.querySelector('#videoContainer video source').getAttribute('src');
+                video_filename = window.location.href.split('https://www.youporn.com/watch/')[1].split('/')[0] + '_' + window.location.href.replace(/\/$/, '').split('/').pop() + '.mp4';
+            }
+            sendResponse({video_link: video_link, video_filename: video_filename});
+        }
+    });
 }
